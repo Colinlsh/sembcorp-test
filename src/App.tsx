@@ -1,44 +1,30 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import DashBoard from "./page/dashboard";
 import Signin from "./page/signin";
-import SignUp from "./page/signup";
-import Calendar from "./components/Calendar";
-import Invoices from "./components/Invoices";
-import Clients from "./components/Clients";
 import { AuthenticatedRoute } from "./components/AuthenticatedRoute";
+import SetWiFi from "./page/setwifi";
+import { useAppSelector } from "./app/hooks";
 
 function App() {
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
+
   return (
     <div>
       <Routes>
-        <Route path="/" element={<DashBoard />} />
+        <Route
+          path="/"
+          element={isAuthenticated ? <Navigate to="/dashboard" /> : <Signin />}
+        />
         <Route path="/dashboard" element={<DashBoard />} />
         <Route
-          path="/calendar"
+          path="/setwifi"
           element={
             <AuthenticatedRoute>
-              <Calendar />
-            </AuthenticatedRoute>
-          }
-        />
-        <Route
-          path="/invoices"
-          element={
-            <AuthenticatedRoute>
-              <Invoices />
-            </AuthenticatedRoute>
-          }
-        />
-        <Route
-          path="/clients"
-          element={
-            <AuthenticatedRoute>
-              <Clients />
+              <SetWiFi />
             </AuthenticatedRoute>
           }
         />
         <Route path="/signin" element={<Signin />} />
-        <Route path="/signup" element={<SignUp />} />
       </Routes>
     </div>
   );

@@ -6,77 +6,39 @@ export interface KeyValuePair {
 }
 
 export interface MainState {
-  oils: oilUIModel[];
-  rainbows: rainbowModel[];
   modal: ModalModel;
-  checkResponse: checkRainbowModelResponse;
-  selectedOil: oilModel;
-  selectedRainbowOils: oilUIModel[];
-  history: RainbowHistoryModel[] | null;
   loading: boolean;
   error: string | null;
 }
 
+export interface User {
+  username: string;
+  tokens: tokens;
+}
+
+export interface tokens {
+  access: string;
+  refresh: string;
+}
+
 export interface UIState {
   modal: ModalModel;
-  new_invoice_modal: NewInvoiceUIModel;
+  wifiModel: WifiModel;
 }
 
-export interface NewInvoiceUIModel extends ModalModel {
-  new_invoice: NewInvoiceModel;
-}
-
-export interface NewInvoiceModel {
-  invoiceNumber: string;
-  customer: string;
-  email: string;
-  date: string;
-  dueDate: string;
-  issueDate: string;
-  items: InvoiceItemModel[];
-  total: number;
+export interface WifiModel {
+  ssid_list: WiFiConnectionsModel[];
   status: string;
+  connected_network: ConnectedNetworkModel;
+  wifiForm: WiFiFormModel;
+  is_network_changing: boolean;
 }
 
-export interface InvoiceItemModel {
-  id: string;
-  description: string;
-  quantity: number;
-  price: number;
-}
-
-export interface rainbowModel {
-  id: string;
-  cid: string;
-  symptoms: string[];
-  csymptoms: string[];
-  essential_oils: essentialoilListModel;
-}
-
-export interface oilModel {
-  id: string;
-  name: string;
-  cname: string;
-  ingredients: string[];
-  cingredients: string[];
-  origin: string;
-  corigin: string;
-  traits: string;
-  ctraits: string;
-  body: string[];
-  mental: string[];
-  skin: string[];
-  imageURL: string;
-}
-
-export interface essentialoilListModel {
-  main: string[];
-  additional: additionalModel[];
-}
-
-export interface additionalModel {
-  id: string[];
-  oils: string[];
+export interface WiFiFormModel {
+  ssid: string;
+  password: string;
+  isLoading: boolean;
+  isTimeoutSuccess: boolean;
 }
 
 export interface ModalModel {
@@ -89,36 +51,31 @@ export interface ModalModel {
   noCallback?: () => void;
 }
 
-export interface checkRainbowModel {
-  codes: string[];
-}
-
-export interface checkRainbowModelResponse {
-  oils: oilModel[];
-  symptoms: rainbowModel[];
-  isLoading: boolean;
-}
-
-export interface oilUIModel extends oilModel {
-  isDisabled: boolean;
-}
-
-export interface selectedOilsModel {
-  oils: oilModel[];
-  symptoms: rainbowModel[];
-}
-
-export interface FirestoreTimestamp {
-  _seconds: number;
-  _nanoseconds: number;
-}
-
-export interface RainbowHistoryModel {
-  checkedRainbows: selectedOilsModel;
-  datetime: FirestoreTimestamp;
-}
-
-export interface UserRegistration {
-  email: string;
+export interface UserLoginModel {
+  username: string;
   password: string;
+}
+
+interface BaseWiFiConnectionModel {
+  SSID: string;
+  Mode: string;
+  Channel: string;
+  Rate: string;
+  Signal: string;
+  Bars: string;
+  Security: string;
+  IsLoading: boolean;
+}
+
+export interface WiFiConnectionsModel extends BaseWiFiConnectionModel {
+  BSSID: string;
+}
+
+export interface ConnectedNetworkModel extends BaseWiFiConnectionModel {
+  Active: boolean;
+}
+
+export interface dh22Model {
+  temperature: number;
+  humidity: number;
 }

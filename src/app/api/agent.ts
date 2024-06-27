@@ -1,46 +1,75 @@
 import axios, { AxiosResponse } from "axios";
-import { checkRainbowModel } from "../models";
+import { UserLoginModel } from "../models";
 
 const appEnv = import.meta.env.VITE_APP_ENV;
-const gcp_function_test = import.meta.env.VITE_TEST_GCP_FUNCTION_TEST_URL;
-const gcp_function_prod = import.meta.env.VITE_TEST_GCP_FUNCTION_URL;
+const appURL = import.meta.env.VITE_APP_API_URL;
+
+const server_api_test = appURL;
+const server_api_prod = appURL;
 
 axios.defaults.baseURL =
-  appEnv === "production" ? gcp_function_test : gcp_function_prod;
+  appEnv === "production" ? server_api_test : server_api_prod;
 
 console.log(appEnv);
-console.log(gcp_function_test);
+console.log(server_api_test);
+console.log(server_api_prod);
 
 const responseBody = (response: AxiosResponse) => response.data;
 
 const requests = {
-  get: (url: string, token?: string) =>
-    axios
-      .get(url, token ? { headers: { Authorization: `Bearer ${token}` } } : {})
-      .then(responseBody),
-  post: (url: string, body: object, token?: string) =>
-    axios
-      .post(
-        url,
-        body,
-        token ? { headers: { Authorization: `Bearer ${token}` } } : {}
-      )
-      .then(responseBody),
-  put: (url: string, body: object) => axios.put(url, body).then(responseBody),
-  del: (url: string) => axios.delete(url).then(responseBody),
+  get: async (url: string, token?: string) => {
+    const response = await axios.get(
+      url,
+      token ? { headers: { Authorization: `Bearer ${token}` } } : {}
+    );
+    return responseBody(response);
+  },
+  post: async (
+    url: string,
+    body: FormData | object,
+    token?: string,
+    timeout?: number
+  ) => {
+    const headers: { [key: string]: string } = token
+      ? { Authorization: `Bearer ${token}` }
+      : {};
+    if (!(body instanceof FormData)) {
+      headers["Content-Type"] = "application/json";
+    }
+
+    const response = await axios.post(url, body, { headers, timeout });
+    return responseBody(response);
+  },
+  put: async (url: string, body: object, token?: string) => {
+    const response = await axios.put(
+      url,
+      body,
+      token ? { headers: { Authorization: `Bearer ${token}` } } : {}
+    );
+    return responseBody(response);
+  },
+  del: async (url: string) => {
+    const response = await axios.delete(url);
+    return responseBody(response);
+  },
 };
 
-const EssentialOils = {
-  listOils: () => requests.get(`oilapi/oils`),
-  listRainbows: (token: string) => requests.get(`rainbowapi/rainbows`, token),
-  check: (params: checkRainbowModel, token?: string) =>
-    requests.post(`rainbowapi/checkRainbow`, params, token),
-  rainbowHistory: (token: string) =>
-    requests.get(`rainbowapi/rainbowHistory`, token),
+const SmartWater = {
+  setWiFi: (form: object, token: string, timeout?: number) => {
+    console.log(form); // Before sending the POST request in React
+
+    return requests.post(`/set-wifi`, form, token, timeout);
+  },
+  scanForWifi: (token: string) => requests.get(`/scan-wifi`, token),
+  checkWiFiConnection: (token: string) =>
+    requests.get("/check-connection", token),
+  signin: (user_login: UserLoginModel) => {
+    return requests.post(`/signin`, user_login);
+  },
 };
 
 const agent = {
-  EssentialOils,
+  SmartWater,
 };
 
 export default agent;

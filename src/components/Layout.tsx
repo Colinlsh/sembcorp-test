@@ -2,7 +2,6 @@ import React from "react";
 import Footer from "./Footer2";
 import Navbar from "./Navbar2";
 import { Dialog } from "./Dialog";
-import NewInvoice from "./NewInvoice";
 // import { Modal } from "./Modal";
 
 interface Props {
@@ -39,7 +38,6 @@ const Layout: React.FC<Props> = ({ children }) => {
         <></>
       )} */}
       <Dialog />
-      <NewInvoice />
     </div>
   );
 };

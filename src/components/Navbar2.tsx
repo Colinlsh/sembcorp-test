@@ -1,18 +1,42 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { FaBars } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
-import Logo from "../assets/curiousoft_white.svg";
+import Logo from "../assets/droplet_logo_white.svg";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { RootState } from "../app/store";
 import { useNavigate } from "react-router-dom";
 import { IoLogInOutline } from "react-icons/io5";
 import { signOutAsync } from "../app/slice/authSlice";
+import { CiWifiOn, CiWifiOff } from "react-icons/ci";
+import { checkWiFiConnectionAsync } from "../app/slice/uiSlice";
+import Spinner from "./Spinner";
 
 const Navbar: React.FC = () => {
   const state = useAppSelector((state: RootState) => state.auth);
+  const uiState = useAppSelector((state: RootState) => state.ui);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout | undefined;
+    if (
+      (state.isAuthenticated && intervalId == undefined) ||
+      (uiState.wifiModel.wifiForm.isTimeoutSuccess && state.isAuthenticated)
+    ) {
+      dispatch(checkWiFiConnectionAsync({}));
+    } else if (state.isAuthenticated) {
+      intervalId = setInterval(() => {
+        dispatch(checkWiFiConnectionAsync({}));
+      }, 5000); // Poll every 5000 milliseconds (5 seconds)
+    }
+
+    return () => clearInterval(intervalId); // Clear the interval on component unmount
+  }, [
+    dispatch,
+    state.isAuthenticated,
+    uiState.wifiModel.wifiForm.isTimeoutSuccess,
+  ]);
 
   return (
     <Disclosure as="nav" className="bg-linkedinShadeDark">
@@ -20,21 +44,13 @@ const Navbar: React.FC = () => {
         <>
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex h-16 items-center justify-between">
-              <div className="flex items-cente">
+              <div className="flex items-center">
                 <div
                   className="flex-shrink-0 cursor-pointer items-center justify-center flex"
                   onClick={() => {
                     navigate("/");
                   }}
                 >
-                  {/* <img
-                    className="h-4 w-fit bg-transparent"
-                    src={Logo}
-                    alt="Your Company"
-                  /> */}
-                  {/* <svg className="h-4 w-fit fill-current" viewBox="0 0 60 60">
-                    <path d={Logo} />
-                  </svg> */}
                   <div
                     onClick={() => {
                       navigate("/");
@@ -43,7 +59,7 @@ const Navbar: React.FC = () => {
                     <img
                       src={Logo}
                       alt="curiousoft"
-                      className="h-4 w-fit bg-transparent"
+                      className="h-7 w-fit bg-transparent"
                     />
                   </div>
                 </div>
@@ -51,7 +67,7 @@ const Navbar: React.FC = () => {
                   <div className="flex space-x-4">
                     {/* Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" */}
                     <button
-                      className="rounded-md px-3 py-2 text-sm font-medium text-white bg-transparent border-0"
+                      className="rounded-md px-3 py-2 text-sm font-medium text-white bg-transparent border-0 "
                       onClick={() => {
                         navigate("/dashboard");
                       }}
@@ -61,34 +77,36 @@ const Navbar: React.FC = () => {
                     {state.isAuthenticated ? (
                       <>
                         <button
-                          className="rounded-md bg-transparent border-0 px-3 py-2 text-sm font-medium text-white"
+                          className="rounded-md bg-transparent border-0 px-3 py-2 text-sm font-medium text-white whitespace-nowrap"
                           onClick={() => {
-                            navigate("/invoices");
+                            navigate("/setwifi");
                           }}
                         >
-                          Invoices
-                        </button>
-                        <button
-                          className="rounded-md bg-transparent border-0 px-3 py-2 text-sm font-medium text-white"
-                          onClick={() => {
-                            navigate("/clients");
-                          }}
-                        >
-                          Clients
-                        </button>
-                        <button
-                          className="rounded-md bg-transparent border-0 px-3 py-2 text-sm font-medium text-white"
-                          onClick={() => {
-                            navigate("/calendar");
-                          }}
-                        >
-                          Calendar
+                          Set WiFi
                         </button>
                       </>
                     ) : null}
                   </div>
                 </div>
+                <div className="rounded-md bg-transparent border-0 px-3 py-2 text-sm font-medium text-white flex space-x-2 w-full">
+                  {uiState.wifiModel.connected_network === undefined ||
+                  uiState.wifiModel.connected_network.Active == false ? (
+                    uiState.wifiModel.connected_network.IsLoading ? (
+                      <Spinner color="fill-white" />
+                    ) : (
+                      <>
+                        <CiWifiOff size={20} />
+                      </>
+                    )
+                  ) : (
+                    <>
+                      <CiWifiOn size={20} />
+                      <p>{uiState.wifiModel.connected_network.SSID}</p>
+                    </>
+                  )}
+                </div>
               </div>
+
               <div className="hidden sm:ml-6 sm:block">
                 <div className="flex items-center">
                   {/* Profile dropdown */}
@@ -98,11 +116,7 @@ const Navbar: React.FC = () => {
                         <span className="absolute -inset-1.5" />
                         <span className="sr-only">Open user menu</span>
                         {state.isAuthenticated ? (
-                          <img
-                            className="h-8 w-8 rounded-full"
-                            src={`${state.user?.photoURL}`}
-                            alt="/"
-                          />
+                          <p>{state.user?.username}</p>
                         ) : (
                           <IoLogInOutline className="h-full w-8 rounded-full bg-transparent border-0" />
                         )}
@@ -134,20 +148,6 @@ const Navbar: React.FC = () => {
                                 </button>
                               )}
                             </Menu.Item>
-                            {/* <Menu.Item>
-                              {({ active }) => (
-                                <button
-                                  className={`${active ? "bg-gray-100" : ""}
-                                block px-4 py-2 text-sm text-gray-700 border-0 w-full text-left bg-transparent
-                              `}
-                                  onClick={() => {
-                                    navigate("/rainbowHistory");
-                                  }}
-                                >
-                                  Rainbow History
-                                </button>
-                              )}
-                            </Menu.Item> */}
                             <Menu.Item>
                               {({ active }) => (
                                 <button
@@ -207,7 +207,6 @@ const Navbar: React.FC = () => {
               {/* Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" */}
               <Disclosure.Button
                 as="a"
-                href="#"
                 className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
                 onClick={() => {
                   navigate("/dashboard");
@@ -221,20 +220,10 @@ const Navbar: React.FC = () => {
                     as="a"
                     className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
                     onClick={() => {
-                      navigate("/invoices");
+                      navigate("/setwifi");
                     }}
                   >
-                    Invoices
-                  </Disclosure.Button>
-                  <Disclosure.Button
-                    as="a"
-                    href="#"
-                    className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-                    onClick={() => {
-                      navigate("/clients");
-                    }}
-                  >
-                    Clients
+                    Set WiFi
                   </Disclosure.Button>
                 </>
               ) : null}
@@ -245,43 +234,15 @@ const Navbar: React.FC = () => {
                   state.isAuthenticated ? "lex items-center px-5" : "hidden"
                 }`}
               >
-                <div className="flex-shrink-0">
-                  <img
-                    className="h-10 w-10 rounded-full"
-                    src={`${state.user?.photoURL}`}
-                    alt="/"
-                  />
-                </div>
                 <div className="ml-3">
                   <div className="text-base font-medium text-white">
-                    {state.user?.displayName}
-                  </div>
-                  <div className="text-sm font-medium text-gray-400">
-                    {state.user?.email}
+                    {state.user?.username}
                   </div>
                 </div>
               </div>
               <div className="mt-3 space-y-1 px-2">
                 {state.isAuthenticated ? (
                   <>
-                    <Disclosure.Button
-                      as="a"
-                      className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-                      onClick={() => {
-                        navigate("/profile");
-                      }}
-                    >
-                      Your Profile
-                    </Disclosure.Button>
-                    {/* <Disclosure.Button
-                      as="a"
-                      className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-                      onClick={() => {
-                        navigate("/rainbowHistory");
-                      }}
-                    >
-                      Rainbow History
-                    </Disclosure.Button> */}
                     <Disclosure.Button
                       as="a"
                       className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
