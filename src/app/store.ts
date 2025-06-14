@@ -13,7 +13,14 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import authReducer from "./slice/authSlice";
-import uiReducer from "./slice/uiSlice";
+import weatherReducer, {
+  initialState as weatherInitialState,
+} from "./slice/weatherSlice";
+import { WeatherState } from "./models/index";
+
+type StateV4 = PersistedState & {
+  weather?: WeatherState;
+};
 
 const migrations: MigrationManifest = {
   0: (state) => {
@@ -40,42 +47,34 @@ const migrations: MigrationManifest = {
   2: (state) => {
     return {
       ...state,
-      ui: {
-        wifiModel: {
-          ssid_list: Array,
-          status: String,
-          is_network_changing: Boolean,
-          wifiForm: {
-            ssid: String,
-            password: String,
-          },
-          connected_network: {
-            Active: Boolean,
-            SSID: String,
-            Mode: String,
-            Channel: String,
-            Rate: String,
-            Signal: String,
-            Bars: String,
-            Security: String,
-            IsLoading: Boolean,
-          },
-        },
-      },
+      weather: weatherInitialState, // Add the entire initial state for the weather slice
     } as PersistedState;
+  },
+  4: (state: StateV4 | undefined) => {
+    // This migration only targets the 'weather' slice of the persisted state.
+    // We check if it exists to be safe.
+    if (state && state.weather) {
+      return {
+        ...state,
+        weather: {
+          ...state.weather,
+          data: null, // Reset 'data' from an array `[]` to `null`
+        },
+      } as PersistedState;
+    }
   },
 };
 
 const persistConfig = {
   key: "root",
-  version: 2,
+  version: 5,
   storage,
-  whitelist: ["auth"], // only auth will be persisted
-  migrations: createMigrate(migrations, { debug: false }),
+  whitelist: ["auth", "weather"], // only auth will be persisted
+  migrations: createMigrate(migrations, { debug: true }),
 };
 const rootReducer = combineReducers({
   auth: authReducer,
-  ui: uiReducer,
+  weather: weatherReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

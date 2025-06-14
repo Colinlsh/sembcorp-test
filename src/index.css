@@ -47,3 +47,8 @@ body {
   line-height: 1.1;
   letter-spacing: 0em;
 }
+
+.map-tiles {
+  /* Try these values to start, then adjust them to your liking! */
+  filter: brightness(0.8) contrast(1.2) saturate(85%);
+}

@@ -26,6 +26,73 @@ export interface UIState {
   wifiModel: WifiModel;
 }
 
+export interface Coordinates {
+  latitude: number;
+  longitude: number;
+}
+
+export interface WeatherData {
+  latitude: number;
+  longitude: number;
+  hourly: {
+    time: string[];
+    temperature2m: Float32Array | number[];
+    relativehumidity2m?: number[];
+    directRadiation?: number[]; // Changed from direct_radiation
+  };
+  daily: {
+    time: string[];
+    // ADD THESE TWO LINES
+    temperature_2m_max: number[];
+    temperature_2m_min: number[];
+  };
+}
+
+export interface AreaForecast {
+  area: string;
+  forecast: string;
+}
+
+// Represents the valid time period for a forecast
+export interface ValidPeriod {
+  start: string;
+  end: string;
+}
+
+// Represents a single item in the main 'items' array
+export interface ForecastItem {
+  update_timestamp: string;
+  timestamp: string;
+  valid_period: ValidPeriod;
+  forecasts: AreaForecast[];
+}
+
+export interface WeatherApiResponse {
+  area_metadata: {
+    name: string;
+    label_location: Coordinates;
+  }[]; // Assuming area_metadata is an array of objects
+  items: ForecastItem[];
+}
+
+export interface WeatherArchiveDataProps {
+  startDate: string;
+  endDate: string;
+  coordinates: Coordinates;
+}
+
+export interface WeatherState {
+  modal: ModalModel;
+  data: WeatherData | null;
+  areaForecasts: WeatherApiResponse | null;
+  isLoading: boolean;
+  currentLocation: {
+    name: string;
+    location: Coordinates;
+    bounds: [[number, number], [number, number]];
+  };
+}
+
 export interface WifiModel {
   ssid_list: WiFiConnectionsModel[];
   status: string;
