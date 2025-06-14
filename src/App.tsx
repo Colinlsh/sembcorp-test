@@ -8,7 +8,7 @@ function App() {
   return (
     <div>
       <Routes>
-        <Route path="/sembcorp-test/" element={<LocationPage />} />
+        <Route path="/" element={<LocationPage />} />
         {/* <Route path="/signin" element={<Signin />} /> */}
       </Routes>
     </div>
