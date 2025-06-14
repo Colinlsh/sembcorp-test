@@ -1,12 +1,10 @@
 # React Weather Forecast Dashboard
 
-# demo-site: [Visible Text](https://main.du0g6ixst3hoa.amplifyapp.com/)
+# [demo-site](https://main.du0g6ixst3hoa.amplifyapp.com/)
 
 An interactive and responsive weather dashboard built with React, Redux, and Leaflet. This application allows users to view detailed hourly and daily weather forecasts for any location worldwide, presented with dynamic charts and a rich map interface.
 
-NOTE! - only data from 1st Nov 2024 ~ 10th Nov 2024 is utilized.
-
-![Application Screenshot](https://i.imgur.com/Kq5U0dM.png)
+NOTE! - only data from 1st Nov 2024 ~ 10th Nov 2024 is utilized and the search is a free service, it may or may not work.
 
 ## Features
 
@@ -26,7 +24,6 @@ NOTE! - only data from 1st Nov 2024 ~ 10th Nov 2024 is utilized.
     1.  Hourly Temperature & Humidity (Dual-axis Line Chart).
     2.  Hourly Solar Radiation (Area Chart).
     3.  Daily Min/Max Temperature (Bar Chart).
-  - **Interactive Chart Timeline**: A `<Brush>` component allows users to zoom in on specific time ranges within the hourly data.
 - **Persistent State**: Uses `redux-persist` to remember user state across sessions, with a migration system to handle state shape changes over time.
 - **Responsive Design**: The layout adapts from a stacked view on mobile to a multi-column dashboard on wider screens using Tailwind CSS.
 
@@ -72,38 +69,6 @@ Follow these instructions to get a copy of the project up and running on your lo
     yarn install
     ```
 
-### Configuration
-
-The application uses environment variables for API endpoints.
-
-1.  Create a `.env.local` file in the root of the project.
-2.  Add the base URL for the Singapore weather API:
-
-    ```env
-    # .env.local
-
-    # For Singapore's 2-hour weather forecast API
-    VITE_API_BASE_URL=[https://api.data.gov.sg](https://api.data.gov.sg)
-    ```
-
-3.  The project uses a Vite proxy to handle CORS issues with the Nominatim API. Ensure the `vite.config.ts` file includes the proxy setup:
-    ```javascript
-    // vite.config.ts
-    export default defineConfig({
-      // ...
-      server: {
-        proxy: {
-          "/api": {
-            target:
-              "[https://nominatim.openstreetmap.org](https://nominatim.openstreetmap.org)",
-            changeOrigin: true,
-            rewrite: (path) => path.replace(/^\/api/, ""),
-          },
-        },
-      },
-    });
-    ```
-
 ### Running the Application
 
 - **Development Mode**:
@@ -113,12 +78,6 @@ The application uses environment variables for API endpoints.
   ```
 
   Open [http://localhost:5173](http://localhost:5173) to view it in the browser.
-
-- **Production Build**:
-  ```sh
-  npm run build
-  ```
-  This builds the app for production to the `dist` folder.
 
 ## Key Project Structure
 
