@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import { User, UserLoginModel } from "../models";
-import agent from "../api/agent";
-import { clearWiFiConnection } from "./uiSlice";
+import { User } from "../models";
+// import agent from "../api/agent";
 
 interface AuthState {
   user: User | null;
@@ -17,37 +16,37 @@ const initialState: AuthState = {
   error: null,
 };
 
-// Async thunk for signing in
-export const signInAsync = createAsyncThunk<
-  // Return type of the payload creator
-  User,
-  // First argument to the payload creator
-  UserLoginModel,
-  // Types for ThunkAPI
-  {
-    rejectValue: string; // Type of the rejection value
-  }
->("auth/signInAsync", async (user_login, { rejectWithValue }) => {
-  try {
-    const response = await agent.SmartWater.signin(user_login);
-    // dispatch(getRainbowHistory());
+// // Async thunk for signing in
+// export const signInAsync = createAsyncThunk<
+//   // Return type of the payload creator
+//   User,
+//   // First argument to the payload creator
+//   UserLoginModel,
+//   // Types for ThunkAPI
+//   {
+//     rejectValue: string; // Type of the rejection value
+//   }
+// >("auth/signInAsync", async (user_login, { rejectWithValue }) => {
+//   try {
+//     const response = await agent.SmartWater.signin(user_login);
+//     // dispatch(getRainbowHistory());
 
-    if (response === undefined) throw new Error("No response from server");
+//     if (response === undefined) throw new Error("No response from server");
 
-    return response;
-  } catch (error) {
-    // For other errors, log and return a generic message
-    console.error(error);
-    return rejectWithValue("Registration failed. Please try again.");
-  }
-});
+//     return response;
+//   } catch (error) {
+//     // For other errors, log and return a generic message
+//     console.error(error);
+//     return rejectWithValue("Registration failed. Please try again.");
+//   }
+// });
 
 export const signOutAsync = createAsyncThunk(
   "auth/signOutAsync",
   async (_, { rejectWithValue, dispatch }) => {
     try {
       dispatch(clearUser());
-      dispatch(clearWiFiConnection());
+      // dispatch(clearWiFiConnection());
     } catch (error) {
       return rejectWithValue("Sign out failed. Please try again.");
     }
@@ -70,19 +69,19 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
       // Handling signInAsync
-      .addCase(signInAsync.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
-      .addCase(signInAsync.fulfilled, (state, action) => {
-        state.user = action.payload ?? null;
-        state.isAuthenticated = !!action.payload;
-        state.isLoading = false;
-      })
-      .addCase(signInAsync.rejected, (state, action) => {
-        state.error = action.payload as string;
-        state.isLoading = false;
-      })
+      // .addCase(signInAsync.pending, (state) => {
+      //   state.isLoading = true;
+      //   state.error = null;
+      // })
+      // .addCase(signInAsync.fulfilled, (state, action) => {
+      //   state.user = action.payload ?? null;
+      //   state.isAuthenticated = !!action.payload;
+      //   state.isLoading = false;
+      // })
+      // .addCase(signInAsync.rejected, (state, action) => {
+      //   state.error = action.payload as string;
+      //   state.isLoading = false;
+      // })
       // Handling signInWithGoogleAsync
       .addCase(signOutAsync.fulfilled, (state) => {
         state.user = null;

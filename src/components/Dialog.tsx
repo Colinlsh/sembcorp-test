@@ -2,7 +2,7 @@ import React, { Fragment } from "react";
 import { Dialog as DL, Transition } from "@headlessui/react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { RootState } from "../app/store";
-import { setModal } from "../app/slice/uiSlice";
+import { setModal } from "../app/slice/weatherSlice";
 
 export interface DialogProps {
   open: boolean;

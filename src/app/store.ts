@@ -13,6 +13,7 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import authReducer from "./slice/authSlice";
+import uiReducer from "./slice/uiSlice";
 import weatherReducer, {
   initialState as weatherInitialState,
 } from "./slice/weatherSlice";
@@ -74,6 +75,7 @@ const persistConfig = {
 };
 const rootReducer = combineReducers({
   auth: authReducer,
+  ui: uiReducer,
   weather: weatherReducer,
 });
 

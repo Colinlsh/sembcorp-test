@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from "axios";
+import { UserLoginModel } from "../models";
 // import { UserLoginModel } from "../models";
 // https://api.data.gov.sg/v1/environment/2-hour-weather-forecast
 
@@ -94,8 +95,23 @@ const SmartWeather = {
   },
 };
 
+const SmartWater = {
+  setWiFi: (form: object, token: string, timeout?: number) => {
+    console.log(form); // Before sending the POST request in React
+
+    return requests.post(`/set-wifi`, form, token, timeout);
+  },
+  scanForWifi: (token: string) => requests.get(`/scan-wifi`, { token: token }),
+  checkWiFiConnection: (token: string) =>
+    requests.get("/check-connection", { token: token }),
+  signin: (user_login: UserLoginModel) => {
+    return requests.post(`/signin`, user_login);
+  },
+};
+
 const agent = {
   SmartWeather,
+  SmartWater,
 };
 
 export default agent;
