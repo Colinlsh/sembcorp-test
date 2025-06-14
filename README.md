@@ -78,21 +78,3 @@ Follow these instructions to get a copy of the project up and running on your lo
   ```
 
   Open [http://localhost:5173](http://localhost:5173) to view it in the browser.
-
-## Key Project Structure
-
-/src
-|-- /api
-| |-- agent.ts # Centralized Axios agent for all API requests
-|-- /app
-| |-- hooks.ts # Typed hooks for Redux
-| |-- store.ts # Redux store configuration with Redux Persist
-| |-- /slice
-| |-- weatherSlice.ts # Redux logic, state, and async thunks for weather
-|-- /components
-| |-- ColinMapMap.tsx # Main map component orchestrating all UI
-| |-- WeatherPanel.tsx # The modal panel with charts and the mini-map
-| |-- SearchComponent.tsx# Search input component
-| |-- MapClickHandler.tsx# Helper component for map click events
-|-- /models
-| |-- index.ts # All TypeScript interfaces for the application
