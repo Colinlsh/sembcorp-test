@@ -10,7 +10,7 @@ import "leaflet/dist/leaflet.css";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <Provider store={store}>
-      <BrowserRouter basename="/sembcorp-test/">
+      <BrowserRouter basename="/">
         <App />
       </BrowserRouter>
     </Provider>
